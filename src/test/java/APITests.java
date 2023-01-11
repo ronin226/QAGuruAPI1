@@ -1,21 +1,24 @@
 import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.when;
 import static org.hamcrest.Matchers.containsString;
+import static specs.Spec.loginRequestSpec;
+
+import models.Pojo;
 import org.junit.jupiter.api.Test;
 import com.github.javafaker.Faker;
 
 public class APITests {
     @Test
     public void registerUserSuccess() {
+        Pojo body = new Pojo();
+        body.setEmail("eve.holt@reqres.in");
+        body.setPassword("pistol");
 
         given()
-                .body("{\n"
-                        + "    \"email\": \"eve.holt@reqres.in\",\n"
-                        + "    \"password\": \"pistol\"\n"
-                        + "}")
-                .contentType("application/json").
+                .spec(loginRequestSpec)
+                .body(body).
                 when().
-                post("https://reqres.in/api/register")
+                post("api/register")
                 .then()
                 .assertThat().statusCode(200)
                 .assertThat().body(containsString("id"));
@@ -49,11 +52,11 @@ public class APITests {
 
     @Test
     public void userLoginSuccess() {
+        Pojo body = new Pojo();
+        body.setEmail("eve.holt@reqres.in");
+        body.setPassword("cityslicka");
         given()
-                .body("{\n"
-                        + "    \"email\": \"eve.holt@reqres.in\",\n"
-                        + "    \"password\": \"cityslicka\"\n"
-                        + "}")
+                .body(body)
                 .contentType("application/json").
                 when().
                 post("https://reqres.in/api/register")
@@ -64,10 +67,10 @@ public class APITests {
 
     @Test
     public void userLoginFail() {
+        Pojo body = new Pojo();
+        body.setEmail("eve.holt@reqres.in");
         given()
-                .body("{\n"
-                        + "    \"email\": \"eve.holt@reqres.in\",\n"
-                        + "}")
+                .body(body)
                 .contentType("application/json").
                 when().
                 post("https://reqres.in/api/register")
