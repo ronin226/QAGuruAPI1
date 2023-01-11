@@ -26,8 +26,10 @@ public class APITests {
 
     @Test
     public void userList() {
+        given()
+                .spec(loginRequestSpec).
         when().
-                get("https://reqres.in/api/users?page=1")
+                get("api/users?page=1")
                 .then()
                 .assertThat().statusCode(200)
                 .assertThat().body(containsString("id"));
@@ -40,10 +42,10 @@ public class APITests {
         String userName = faker.name().name();
 
         given()
-                .body("{\"name\": \"" + userName + "\",\"job\": \"" + userJob + "\"}")
-                .contentType("application/json").
+                .spec(loginRequestSpec)
+                .body("{\"name\": \"" + userName + "\",\"job\": \"" + userJob + "\"}").
                 when().
-                post("https://reqres.in/api/users")
+                post("/api/users")
                 .then()
                 .assertThat().statusCode(201)
                 .assertThat().body(containsString(userJob))
@@ -56,10 +58,10 @@ public class APITests {
         body.setEmail("eve.holt@reqres.in");
         body.setPassword("cityslicka");
         given()
-                .body(body)
-                .contentType("application/json").
+                .spec(loginRequestSpec)
+                .body(body).
                 when().
-                post("https://reqres.in/api/register")
+                post("/api/register")
                 .then()
                 .assertThat().statusCode(200)
                 .assertThat().body(containsString("token"));
@@ -70,10 +72,10 @@ public class APITests {
         Pojo body = new Pojo();
         body.setEmail("eve.holt@reqres.in");
         given()
-                .body(body)
-                .contentType("application/json").
+                .spec(loginRequestSpec)
+                .body(body).
                 when().
-                post("https://reqres.in/api/register")
+                post("/api/register")
                 .then()
                 .assertThat().statusCode(400);
     }
