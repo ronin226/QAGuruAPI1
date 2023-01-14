@@ -1,16 +1,15 @@
 import static io.restassured.RestAssured.given;
-import static io.restassured.RestAssured.when;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasItem;
 import static specs.Spec.loginRequestSpec;
-
-import models.Pojo;
+import models.lombokModel;
 import org.junit.jupiter.api.Test;
 import com.github.javafaker.Faker;
 
 public class APITests {
     @Test
     public void registerUserSuccess() {
-        Pojo body = new Pojo();
+        lombokModel body = new lombokModel();
         body.setEmail("eve.holt@reqres.in");
         body.setPassword("pistol");
 
@@ -28,7 +27,7 @@ public class APITests {
     public void userList() {
         given()
                 .spec(loginRequestSpec).
-        when().
+                when().
                 get("api/users?page=1")
                 .then()
                 .assertThat().statusCode(200)
@@ -54,7 +53,7 @@ public class APITests {
 
     @Test
     public void userLoginSuccess() {
-        Pojo body = new Pojo();
+        lombokModel body = new lombokModel();
         body.setEmail("eve.holt@reqres.in");
         body.setPassword("cityslicka");
         given()
@@ -69,7 +68,7 @@ public class APITests {
 
     @Test
     public void userLoginFail() {
-        Pojo body = new Pojo();
+        lombokModel body = new lombokModel();
         body.setEmail("eve.holt@reqres.in");
         given()
                 .spec(loginRequestSpec)
@@ -78,5 +77,16 @@ public class APITests {
                 post("/api/register")
                 .then()
                 .assertThat().statusCode(400);
+    }
+
+    @Test
+    void checkExistingUserEmailGroovy() {
+        given(loginRequestSpec)
+                .when()
+                .get("/api/users")
+                .then()
+                .statusCode(200)
+                .body("data.findAll{it.email =~/.*?@reqres.in/}.email.flatten()",
+                        hasItem("george.bluth@reqres.in"));
     }
 }
