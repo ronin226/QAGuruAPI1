@@ -87,6 +87,6 @@ public class APITests {
                 .then()
                 .statusCode(200)
                 .body("data.findAll{it.email =~/.*?@reqres.in/}.email.flatten()",
-                        hasItem("george.bluth@reqres.in"));
+                        hasItem("eve.holt@reqres.in"));
     }
 }
